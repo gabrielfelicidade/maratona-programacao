@@ -5,10 +5,9 @@ using namespace std;
 class Person {
     public:
         int id;
-        Person *next;
+        Person *next = nullptr;
         Person(int i) {
             id = i;
-            next = nullptr;
         }
 };
 
