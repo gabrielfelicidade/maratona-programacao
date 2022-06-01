@@ -2,16 +2,26 @@
 
 using namespace std;
 
-struct sPessoa {
-    int id;
-    struct sPessoa* next;
+class Person {
+    public:
+        int id;
+        Person *next;
+        Person(int i) {
+            id = i;
+            next = nullptr;
+        }
 };
 
-typedef struct {
-    bool infectado;
-    struct sPessoa* pessoas;
-    struct sPessoa* ultima;
-} sGrupo;
+class Group {
+    public:
+        bool infected = false;
+        Person* people;
+        Person* tail;
+        Group(Person* person) {
+            people = person;
+            tail = person;
+        }
+};
 
 int main(){
 
@@ -22,19 +32,13 @@ int main(){
     int ns = p;
     int n = p;
 
-    sGrupo* grupos[p+1];
+    Group* groups[p+1];
 
     for (int i = 1; i <= p; i++) {
-        struct sPessoa* pessoa = (struct sPessoa*) malloc(sizeof(struct sPessoa));
-        sGrupo* grupo = (sGrupo*) malloc(sizeof(sGrupo));
+        Person *person = new Person(i);
+        Group *group = new Group(person);
 
-        pessoa->id = i;
-        pessoa->next = NULL;
-
-        grupo->infectado = false;
-        grupo->pessoas = pessoa;
-        grupo->ultima = pessoa;
-        grupos[i] = grupo;
+        groups[i] = group;
     }
 
     while (e--) {
@@ -45,31 +49,29 @@ int main(){
         if (s == "c") {
             int a, b;
             cin >> a >> b;
-            if (grupos[a] != grupos[b]) {
+            if (groups[a] != groups[b]) {
                 n--;
-                if (grupos[a]->infectado && !grupos[b]->infectado) {
+                if (groups[a]->infected && !groups[b]->infected) {
                     ns--;
-                } else if (!grupos[a]->infectado && grupos[b]->infectado) {
+                } else if (!groups[a]->infected && groups[b]->infected) {
                     ns--;
                     ni++;
-                } else if (grupos[a]->infectado && grupos[b]->infectado) {
+                } else if (groups[a]->infected && groups[b]->infected) {
                     ni--;
                 } else {
                     ns--;
                 }
-                grupos[a]->ultima->next = grupos[b]->pessoas;
-                grupos[a]->ultima = grupos[b]->ultima;
-                grupos[b]->infectado = false;
-                grupos[b]->pessoas = NULL;
-                grupos[b]->ultima = NULL;
-                grupos[b] = grupos[a];
+
+                groups[a]->tail->next = groups[b]->people;
+                groups[a]->tail = groups[b]->tail;
+                groups[b] = groups[a];
             }
         } else if (s == "p") {
             int a;
             cin >> a;
 
-            if (!grupos[a]->infectado) {
-                grupos[a]->infectado = true;
+            if (!groups[a]->infected) {
+                groups[a]->infected = true;
                 ni++;
                 ns--;
             }
@@ -83,11 +85,11 @@ int main(){
             if (ni == 0) printf("vazio\n"); else {
                 vector<int> infectados(p + 1, 0);
                 for (int i = 1; i <= p; i++) {
-                    if (grupos[i]->infectado) {
-                        struct sPessoa* pessoa = grupos[i]->pessoas;
-                        while(pessoa != NULL) {
-                            infectados[pessoa->id] = 1;
-                            pessoa = pessoa->next;
+                    if (groups[i]->infected) {
+                        Person* person = groups[i]->people;
+                        while(person != nullptr) {
+                            infectados[person->id] = 1;
+                            person = person->next;
                         }
                     }
                 }
