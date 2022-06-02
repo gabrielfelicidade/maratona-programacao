@@ -82,19 +82,19 @@ int main(){
             printf("%d\n", ni);
         } else {
             if (ni == 0) printf("vazio\n"); else {
-                vector<int> infectados(p + 1, 0);
+                vector<int> infected(p + 1, 0);
                 for (int i = 1; i <= p; i++) {
-                    if (groups[i]->infected) {
+                    if (groups[i]->infected && !infected[i]) {
                         Person* person = groups[i]->people;
                         while(person != nullptr) {
-                            infectados[person->id] = 1;
+                            infected[person->id] = 1;
                             person = person->next;
                         }
                     }
                 }
                 int primeiro = 1;
                 for (int i = 0; i <= p; i++) {
-                    if (infectados[i]) {
+                    if (infected[i]) {
                         if (primeiro) {
                             printf("%d", i);
                             primeiro = 0;
